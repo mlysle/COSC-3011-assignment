@@ -12,7 +12,7 @@ public class GuessingGame {
         do {
           System.out.println("Guess word");
           input = inputReader.nextLine();  // Read user input
-        } while (!word.equals(input));
+        } while (!word.equalsIgnoreCase(input));
         inputReader.close();
     }
 }
