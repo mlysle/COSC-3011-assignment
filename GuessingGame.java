@@ -1,5 +1,5 @@
 import java.util.Scanner;
-public class guessingGame {
+public class GuessingGame {
     public static void main(String[] args) {
         int numCorrect = 0;
         int numCorrectPosition = 0;
