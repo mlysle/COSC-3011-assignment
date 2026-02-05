@@ -6,64 +6,73 @@ public class GameManager {
   String word;
 
   GameManager() {
-    WordGen words = new WordGen();
-    word = words.getWord();
+    WordGen wordGenerator = new WordGen();
+    word = wordGenerator.getWord();
     wordLength = word.length();
   }
 
-  void start() {
-    int numCorrect = 0;
-    int numCorrectPosition = 0;
-    Scanner inputReader = new Scanner(System.in);
-    String input;
-    HashMap<Character, Integer> wordMap = new HashMap<>();
+  int numCorrectLetter(String guess, HashMap<Character, Integer> wMap) {
+    int correct = 0;
+      for (int i = 0; i < word.length(); i++) {
+        char c = guess.charAt(i);
+        c = Character.toUpperCase(c);
+        Integer letterCount = wMap.get(c);
+        if (letterCount != null) {
+          if (letterCount >= 0) {
+            correct++;
+            wMap.put(c, letterCount-1);
+          }
+        }
+      }
+    return correct;
+  }
+
+  int numCorrectPosition(String word, String guess) {
+    int correct = 0;
+      for (int i = 0; i < word.length(); i++) {
+        char c1 = word.charAt(i);
+        char c2 = guess.charAt(i);
+        if (Character.toLowerCase(c1) == Character.toLowerCase(c2)) {
+        correct++;
+        }
+    }
+    return correct;
+  }
+
+  HashMap<Character, Integer> wordMapGen(String word) {
+    HashMap<Character, Integer> wMap = new HashMap<>();
 
     for (int i = 0; i < word.length(); i++) {
       char c = word.charAt(i);
       c = Character.toUpperCase(c);
-      Integer letterCount = wordMap.get(c);
+      Integer letterCount = wMap.get(c);
 
       if (letterCount != null) {
-        wordMap.put(c, letterCount + 1);
+        wMap.put(c, letterCount + 1);
       }
       else {
-        wordMap.put(c, 1);
+        wMap.put(c, 1);
       }
     }
 
-    System.out.println(wordMap);
-    System.out.println(word);
+    return wMap;
+  }
+
+  void start() {
+    Scanner inputReader = new Scanner(System.in);
+    String input;
+    HashMap<Character, Integer> wordMap = wordMapGen(word);
 
     do {
       System.out.println("Guess word");
       input = inputReader.nextLine(); 
-      numCorrectPosition = 0;
-      numCorrect = 0;
-      HashMap<Character, Integer> loopWordMap = wordMap;
 
       if (input.length() != wordLength) {
         System.out.println("Wrong word length. Should be " + wordLength + " letters.");
         continue;
       }
 
-      for (int i = 0; i < word.length(); i++) {
-        char c1 = word.charAt(i);
-        char c2 = input.charAt(i);
-        if (Character.toLowerCase(c1) == Character.toLowerCase(c2)) {
-          numCorrectPosition++;
-        }
-        c2 = Character.toUpperCase(c2);
-        Integer letterCount = wordMap.get(c2);
-        if (letterCount != null) {
-          if (letterCount >= 0) {
-            numCorrect++;
-            loopWordMap.put(c2, letterCount-1);
-          }
-        }
-        
-      }
-
-      System.out.println("(" + numCorrect + ", " + numCorrectPosition + ")");
+      System.out.println("(" + numCorrectLetter(input, wordMap)+ ", " + numCorrectPosition(word, input)+ ")");
     } while (!word.equalsIgnoreCase(input));
     inputReader.close();
     System.out.println("Success");
